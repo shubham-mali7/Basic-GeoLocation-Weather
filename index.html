@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>GeoLocation</title>
+  </head>
+  <body>
+    <button onclick="geoLocation()">Get Location</button>
+    <!-- for Location -->
+    <p id="out"></p>
+    <!-- for weather  -->
+    <p id="weatherOut"></p>
+
+    <script>
+      let x = document.getElementById("out");
+      let y = document.getElementById("weatherOut");
+
+      function geoLocation() {
+        if (navigator.geolocation) {
+          navigator.geolocation.getCurrentPosition(showPosition);
+        } else {
+          x.innerText = "Geo not Supported";
+        }
+      }
+
+      const showPosition = (data) => {
+        console.log(data);
+        let lat = data.coords.latitude;
+        let long = data.coords.longitude;
+        let out = `latitude is ${lat} and longitide is ${long}`;
+        x.innerText = out;
+
+        const url = `https://api.openweathermap.org/data/2.5/forecast/daily?lat=${lat}&lon=${long}&mode=json&units=metric&cnt=5&appid=fbf712a5a83d7305c3cda4ca8fe7ef29`;
+
+        // api calling using fetch
+        fetch(url, { method: "GET" })
+          // return Promise
+          .then((res) => res.json())
+          //return data
+          .then((data) => {
+            console.log(data);
+            let city = data.city.name;
+            let temp = data.list[0].temp.day;
+            let out2 = `Your City is ${city} and temperature is ${temp} °C`;
+            y.innerText = out2;
+          });
+      };
+    </script>
+  </body>
+</html>
